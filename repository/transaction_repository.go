@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"INi-Wallet2/model"
+	"INi-Wallet2/utils"
 	"context"
 	"log"
 
@@ -20,7 +22,7 @@ type transactionRepository struct {
 	db *sqlx.DB
 }
 
-//insert transaksi transfer
+// insert transaksi transfer
 func (tr *transactionRepository) InsertTransactionTransfer(trasaction model.Transaction) error {
 	tx, err := tr.db.BeginTx(context.Background(), nil)
 	defer tx.Rollback()
@@ -106,12 +108,12 @@ func (tr *transactionRepository) InsertTransactionPayment(trasaction model.Trans
 
 }
 
-//GetByID
+// GetByID
 func (tr *transactionRepository) GetByID(transaction_ID string) (model.Transaction, error) {
 	var transaction model.Transaction
 	err := tr.db.QueryRow(utils.SELECT_TRANSACTION_ID, transaction_ID).Scan(
 		&transaction.Transaction_ID,
-		&transaction.Userwallet_id,// di ubah
+		&transaction.Userwallet_id, // di ubah
 		&transaction.Money_Changer_ID,
 		&transaction.Transaction_Type_ID,
 		&transaction.Payment_method_id,
@@ -146,7 +148,7 @@ func (tr *transactionRepository) Delete(transaction_ID string) error {
 	return nil
 }
 
-//object
+// object
 func NewTransactionRepository(db *sqlx.DB) TransactionRepository {
 	return &transactionRepository{
 		db: db,
