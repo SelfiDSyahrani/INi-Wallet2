@@ -3,18 +3,20 @@ package utils
 const (
 
 	//user
-	INSERT_USER       = "INSERT INTO user (userWallet_ID, name, email, phone, password, balance) values ($!,$2, $3, $4, $5, $6)"
-	DELETE_USER       = "DELETE FROM user where userWallet_ID = $1"
-	SELECT_USER_ID    = "SELECT * FROM user where userWallet_ID = $1"
-	SELECT_USER_LIST  = "SELECT * FROM payment_method"
-	UPDATE_USER_BY_ID = "UPDATE user set set name=$1, balance=$2 where id=$3"
-	UPDATE_USER_PASS  = "UPDATE user set set password where id=$1 AND email=$2"
+	INSERT_USER       = "INSERT INTO users (userWallet_id, name, email, phone, password, balance) values ($!,$2, $3, $4, $5, $6)"
+	DELETE_USER       = "DELETE FROM users where userWallet_id = $1"
+	SELECT_USER_ID    = "SELECT * FROM users where userWallet_id = $1"
+	SELECT_USER_LIST  = "SELECT * FROM users"
+	SELECT_BY_EMAIL   = "SELECT * FROM users where email = $1"
+	UPDATE_USER_BY_ID = "UPDATE users set name=$1, balance=$2 where userWallet_id=$3"
+	UPDATE_USER_PASS  = "UPDATE users set password=$1 where email=$2"
 
+//=======================================================
+	// transaction
 	SELECT_TRANSACTION    = "SELECT * FROM transactions"
 	SELECT_TRANSACTION_ID = "SELECT * FROM transactions where transaction_id = $1"
 	DELETE_TRANSACTION    = "DELETE FROM transactions where transaction_id = $1"
-//=======================================================
-	//transaction
+
 	//transfer
 	INSERT_RECORDS_TRANSFER      = "INSERT INTO transactions (transaction_id,userwallet_id,money_changer_id,trasaction_type_id,amount,status,date_time) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)"
 	UPDATE_BALANCE_TRANSFER_USER = "UPDATE users set balance = balance - $1"

@@ -27,14 +27,13 @@ func Server() *appServer {
 
 func (a *appServer) initHandlers() {
 
+	controller.NewUserController(a.engine, a.useCaseManager.UserUseCase())
 	controller.NewControllerTransaksi(a.engine, a.useCaseManager.TransactionUscase())
-
-	// controller.NewStoreController(a.engine, a.useCaseManager.StoreUseCase(), a.useCaseManager.ProductUseCase())
 }
 
 func (a *appServer) Run() {
 	a.initHandlers()
-	err := a.engine.Run(":8080")
+	err := a.engine.Run(":8085")
 	if err != nil {
 		panic(err.Error())
 	}

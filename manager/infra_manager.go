@@ -6,8 +6,6 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-
-
 type InfraManager interface {
 	SqlDb() *sqlx.DB
 }
