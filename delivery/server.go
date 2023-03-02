@@ -29,11 +29,14 @@ func (a *appServer) initHandlers() {
 
 	controller.NewUserController(a.engine, a.useCaseManager.UserUseCase())
 	controller.NewControllerTransaksi(a.engine, a.useCaseManager.TransactionUscase())
+	controller.NewMoneyChangerController(a.engine,a.useCaseManager.MoneyChangerUsecase())
+	controller.NewControllerPayment(a.engine,a.useCaseManager.PaymentMethodUsecase())
+	controller.NewControllerTransactionType(a.engine,a.useCaseManager.TransactionTypeUsecase())
 }
 
 func (a *appServer) Run() {
 	a.initHandlers()
-	err := a.engine.Run(":8085")
+	err := a.engine.Run(":8080")
 	if err != nil {
 		panic(err.Error())
 	}
