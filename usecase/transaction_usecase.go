@@ -6,8 +6,6 @@ import (
 	"log"
 )
 
-
-
 type TransactionUscase interface {
 	Transfer(transaction model.Transaction) error
 	TopuP(transaction model.Transaction) error
@@ -25,7 +23,6 @@ func (t *transactionUscase) Transfer(transaction model.Transaction) error {
 	/* if t.transactionRepo.InsertTransactionPayment <= t.Transfer {
 		return errors.New("saldo anda tidak cukup")
 	} */
-
 
 	//Proses dengan transactions
 	//1. transctionRepo.InsertIntoTabelTransction
@@ -53,11 +50,10 @@ func (t *transactionUscase) TransactionGetByID(transaction_ID string) (model.Tra
 func (t *transactionUscase) TransactionGetAll() ([]model.Transaction, error) {
 	var trxList []model.Transaction
 	trxList, err := t.transactionRepo.GetAll()
-if err != nil {
-	log.Println("error use case ", err.Error())
-	
-}
-	
+	if err != nil {
+		log.Println("error use case ", err.Error())
+
+	}
 
 	return trxList, err
 }
