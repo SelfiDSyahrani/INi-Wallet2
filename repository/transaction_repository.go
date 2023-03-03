@@ -10,16 +10,27 @@ import (
 )
 
 type TransactionRepository interface {
+	CreateTrans(transaction *model.Transaction) error
 	InsertTransactionTransfer(trasaction model.Transaction) error
 	InsertTransactionTopUp(trasaction model.Transaction) error
 	InsertTransactionPayment(trasaction model.Transaction) error
 	GetByID(transaction_ID string) (model.Transaction, error)
 	GetAll() ([]model.Transaction, error)
 	Delete(transaction_ID string) error
+	GetByuserWalletID(userWallet_id string) ([]model.Transaction, error)
 }
 
 type transactionRepository struct {
 	db *sqlx.DB
+}
+
+// create new transaction
+func (tr *transactionRepository) CreateTrans(trns *model.Transaction) error {
+	_, err := tr.db.Query(utils.INSERT_TRANSACTION, trns.Transaction_ID, trns.Userwallet_id, trns.Money_Changer_ID, trns.Transaction_Type_ID, trns.Payment_method_id, trns.Amount, trns.Status, trns.Date_Time)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // insert transaksi transfer
@@ -146,6 +157,16 @@ func (tr *transactionRepository) Delete(transaction_ID string) error {
 		return err
 	}
 	return nil
+}
+
+// get all transaction for specific user
+func (tr *transactionRepository) GetByuserWalletID(userWallet_id string) ([]model.Transaction, error) {
+	var transactions []model.Transaction
+	err := tr.db.Select(&transactions, utils.SELECT_TRANSACTION_BY_USER_ID, userWallet_id)
+	if err != nil {
+		return nil, err
+	}
+	return transactions, nil
 }
 
 // object

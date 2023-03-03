@@ -5,13 +5,15 @@ import (
 	"INi-Wallet2/model"
 	"INi-Wallet2/usecase"
 	"INi-Wallet2/utils"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 type UserController struct {
-	userUC usecase.UserUseCase
+	userUC  usecase.UserUseCase
+	TransUC usecase.TransactionUscase
 	// tokenGenerate utils.TokenUtils
 	// jwt    service.JWTService
 }
@@ -19,6 +21,7 @@ type UserController struct {
 func (cc *UserController) loginUser(ctx *gin.Context) {
 	input := dto.LoginRequestBody{}
 	err := ctx.ShouldBindJSON(&input)
+	fmt.Println(input)
 	if err != nil {
 		utils.HandleBadRequest(ctx, err.Error())
 	} else {
@@ -30,6 +33,7 @@ func (cc *UserController) loginUser(ctx *gin.Context) {
 			userTampilan.Name = user.Name
 			userTampilan.Email = user.Email
 			userTampilan.ID = user.ID
+			userTampilan.Balance = user.Balance
 			utils.HandleSuccessCreated(ctx, "Success log-in", userTampilan)
 		}
 
@@ -117,6 +121,15 @@ func (cc *UserController) getByEmail(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, user)
 }
 
+func (cc *UserController) userListTrans(ctx *gin.Context) {
+	id := ctx.Param("id")
+	user, err := cc.TransUC.TransactionByUserId(id)
+	if err != nil {
+		utils.HandleNotFound(ctx, "User Id is not Found")
+	}
+	ctx.JSON(http.StatusOK, user)
+}
+
 func NewUserController(router *gin.Engine, usecase usecase.UserUseCase) *UserController {
 	newcontroller := UserController{
 		userUC: usecase,
@@ -124,6 +137,7 @@ func NewUserController(router *gin.Engine, usecase usecase.UserUseCase) *UserCon
 	rG := router.Group("api/v1/eWallet")
 	rG.GET("/users", newcontroller.getAllUser)
 	rG.GET("/user/:id", newcontroller.getUserById)
+	rG.GET("/user/:id/transaction", newcontroller.userListTrans)
 	rG.GET("/user/id/:email", newcontroller.getByEmail)
 	rG.POST("/register", newcontroller.registerCustomer)
 	rG.POST("/login", newcontroller.loginUser)

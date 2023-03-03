@@ -29,6 +29,8 @@ func (a *appServer) initHandlers() {
 
 	controller.NewUserController(a.engine, a.useCaseManager.UserUseCase())
 	controller.NewControllerTransaksi(a.engine, a.useCaseManager.TransactionUscase())
+	controller.NewServiceController(a.engine, a.useCaseManager.TransService())
+
 }
 
 func (a *appServer) Run() {

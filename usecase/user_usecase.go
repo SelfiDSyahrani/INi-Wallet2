@@ -20,11 +20,30 @@ type UserUseCase interface {
 	DeleteUser(id string) error
 	Login(input *dto.LoginRequestBody) (model.User, error)
 	ForgotPass(input *dto.ForgotPasswordRequestBody) error
+	GetUser_ListTrans(userWallet_id string) (model.UserTransaction, error)
 }
 
 // User Use Case implementation
 type userUseCase struct {
 	userRepo repository.UserRepository
+	transUC  TransactionUscase
+}
+
+// GetUser_ListTrans implements UserUseCase
+func (ut *userUseCase) GetUser_ListTrans(userWallet_id string) (model.UserTransaction, error) {
+	var userTransactions model.UserTransaction
+	user, err := ut.userRepo.GetByID(userWallet_id)
+	if err != nil {
+		return userTransactions, err
+	}
+	listTrans, err := ut.transUC.TransactionByUserId(userWallet_id)
+	if err != nil {
+		return model.UserTransaction{}, err
+	}
+	userTransactions.UserWallet_id = user.ID
+	userTransactions.UserName = user.Name
+	userTransactions.Transaction = listTrans
+	return userTransactions, nil
 }
 
 type USConfig struct {
@@ -41,7 +60,6 @@ func (u *userUseCase) RegisterUser(input *model.User) error {
 		return err
 	}
 	input.Password = string(passwordHash)
-	input.Balance = 0
 	return u.userRepo.Insert(input)
 }
 
@@ -66,13 +84,14 @@ func (u *userUseCase) DeleteUser(id string) error {
 }
 
 func (u *userUseCase) ForgotPass(input *dto.ForgotPasswordRequestBody) error {
+	fmt.Println(input)
 	var userForgotPass model.User
 	var err error
 	userForgotPass, err = u.userRepo.FindByEmail(input.Email)
 	if err != nil {
 		return err
 	}
-	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.NewPassword), bcrypt.MinCost)
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.MinCost)
 	if err != nil {
 		return &utils.NotValidEmailError{}
 	}
@@ -83,10 +102,7 @@ func (u *userUseCase) ForgotPass(input *dto.ForgotPasswordRequestBody) error {
 }
 
 func (s *userUseCase) Login(input *dto.LoginRequestBody) (model.User, error) {
-	// _, err := mail.ParseAddress(input.Email)
-	// if err != nil {
-	// 	return model.User{}, &utils.NotValidEmailError{}
-	// }
+	fmt.Println(input)
 	user, err := s.userRepo.FindByEmail(input.Email)
 	if err != nil {
 		return user, err
@@ -98,8 +114,9 @@ func (s *userUseCase) Login(input *dto.LoginRequestBody) (model.User, error) {
 	return user, nil
 }
 
-func NewUserUseCase(userRepo repository.UserRepository) UserUseCase {
+func NewUserUseCase(userRepo repository.UserRepository, transUC TransactionUscase) UserUseCase {
 	return &userUseCase{
 		userRepo: userRepo,
+		transUC:  transUC,
 	}
 }

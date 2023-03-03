@@ -14,6 +14,7 @@ type TransactionUscase interface {
 	Payment(transaction model.Transaction) error
 	TransactionGetByID(transaction_ID string) (model.Transaction, error)
 	TransactionGetAll() ([]model.Transaction, error)
+	TransactionByUserId(userWallet_id string) ([]model.Transaction, error)
 }
 
 type transactionUscase struct {
@@ -57,9 +58,13 @@ if err != nil {
 	log.Println("error use case ", err.Error())
 	
 }
-	
-
 	return trxList, err
+}
+
+
+// get all transaction for specific user
+func (t *transactionUscase) TransactionByUserId(userWallet_id string) ([]model.Transaction, error) {
+	return t.transactionRepo.GetByuserWalletID(userWallet_id)
 }
 
 func NewTransaction(transactionRepo repository.TransactionRepository) TransactionUscase {

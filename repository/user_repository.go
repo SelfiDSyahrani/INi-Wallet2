@@ -3,6 +3,7 @@ package repository
 import (
 	"INi-Wallet2/model"
 	"INi-Wallet2/utils"
+	"fmt"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -69,14 +70,17 @@ func (r *userRepository) GetAll() ([]model.User, error) {
 }
 
 func (r *userRepository) UpdateById(user model.User) error {
-	_, err := r.db.NamedExec(utils.UPDATE_USER_BY_ID, user)
+	res, err := r.db.Exec(utils.UPDATE_USER_BY_ID, user.Balance, user.ID)
+	count, err := res.RowsAffected()
 	if err != nil {
-		return err
+		panic(err)
 	}
+	fmt.Printf("rows updated: %v\n", count)
 	return nil
 }
+
 func (r *userRepository) UpdateByEmail(user model.User) error {
-	_, err := r.db.NamedExec(utils.UPDATE_USER_PASS, user)
+	_, err := r.db.Exec(utils.UPDATE_USER_PASS, user.Password, user.Email)
 	if err != nil {
 		return err
 	}
@@ -84,6 +88,7 @@ func (r *userRepository) UpdateByEmail(user model.User) error {
 }
 
 func (r *userRepository) FindByEmail(email string) (model.User, error) {
+	fmt.Println(email)
 	var user model.User
 	err := r.db.QueryRow(utils.SELECT_BY_EMAIL, email).Scan(
 		&user.ID,
