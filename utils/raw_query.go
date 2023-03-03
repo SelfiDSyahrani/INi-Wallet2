@@ -4,7 +4,7 @@ const (
 
 	//user
 	INSERT_USER       = "INSERT INTO users (userWallet_id, name, email, phone, password, balance) values ($!,$2, $3, $4, $5, $6)"
-	DELETE_USER       = "DELETE FROM users where userWallet_id = $1"
+	DELETE_USER       = "DELETE FROM users where userwallet_id = $1"
 	SELECT_USER_ID    = "SELECT * FROM users where userWallet_id = $1"
 	SELECT_USER_LIST  = "SELECT * FROM users"
 	SELECT_BY_EMAIL   = "SELECT * FROM users where email = $1"

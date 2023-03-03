@@ -2,7 +2,6 @@ package controller
 
 import (
 	"INi-Wallet2/usecase"
-
 	"github.com/gin-gonic/gin"
 )
 

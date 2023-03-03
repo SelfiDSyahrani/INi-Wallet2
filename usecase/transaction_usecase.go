@@ -6,8 +6,6 @@ import (
 	"log"
 )
 
-
-
 type TransactionUscase interface {
 	Transfer(transaction model.Transaction) error
 	TopuP(transaction model.Transaction) error
@@ -26,7 +24,6 @@ func (t *transactionUscase) Transfer(transaction model.Transaction) error {
 	/* if t.transactionRepo.InsertTransactionPayment <= t.Transfer {
 		return errors.New("saldo anda tidak cukup")
 	} */
-
 
 	//Proses dengan transactions
 	//1. transctionRepo.InsertIntoTabelTransction
