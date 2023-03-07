@@ -9,7 +9,7 @@ import (
 )
 
 type UserRepository interface {
-	Delete(userWallet_ID string) error
+	// Delete(userWallet_ID string) error
 	FindByEmail(email string) (model.User, error)
 	GetByID(userWallet_ID string) (model.User, error)
 	GetAll() ([]model.User, error)
@@ -33,15 +33,14 @@ func (r *userRepository) Insert(user *model.User) error {
 }
 
 // DeleteUser deletes an existing user
-func (r *userRepository) Delete(user_ID string) error {
-	_, err := r.db.Exec(utils.DELETE_USER, user_ID)
-	if err != nil {
-		return err
-	}
-	return nil
-}
+// func (r *userRepository) Delete(user_ID string) error {
+// 	_, err := r.db.Exec(utils.DELETE_USER, user_ID)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
 
-// GetByID retrieves a user by ID
 // GetByID
 func (r *userRepository) GetByID(user_ID string) (model.User, error) {
 	var user model.User
@@ -103,6 +102,7 @@ func (r *userRepository) FindByEmail(email string) (model.User, error) {
 	}
 	return user, nil
 }
+
 
 func NewUserRepository(db *sqlx.DB) UserRepository {
 	return &userRepository{

@@ -9,7 +9,7 @@ import (
 )
 
 type MoneyChangerRepository interface {
-	GetByID(MoneyChanger_ID string) (model.MoneyChanger, error)
+	GetByID(MoneyChanger_ID string) (*model.MoneyChanger, error)
 	GetAll() ([]model.MoneyChanger, error)
 }
 
@@ -17,23 +17,22 @@ type moneyChangerRepository struct {
 	db *sqlx.DB
 }
 
-func (mc *moneyChangerRepository)GetByID(MoneyChanger_ID string) (model.MoneyChanger, error) {
+func (mc *moneyChangerRepository) GetByID(MoneyChanger_ID string) (*model.MoneyChanger, error) {
 	var MoneyChanger model.MoneyChanger
-	err := mc.db.QueryRow(utils.SELECT_MONEY_CHANGER_ID,MoneyChanger_ID).Scan(
-	 &MoneyChanger.Money_changer_id,
-	 &MoneyChanger.Name,
-	 &MoneyChanger.Exchange_rate,
-	 &MoneyChanger.Currency_type,
-	 &MoneyChanger.Country,
-
+	err := mc.db.QueryRow(utils.SELECT_MONEY_CHANGER_ID, MoneyChanger_ID).Scan(
+		&MoneyChanger.Money_changer_id,
+		&MoneyChanger.Name,
+		&MoneyChanger.Exchange_rate,
+		&MoneyChanger.Currency_type,
+		&MoneyChanger.Country,
 	)
 	if err != nil {
-		return model.MoneyChanger{}, err
+		return &model.MoneyChanger{}, err
 	}
-	return MoneyChanger, nil
+	return &MoneyChanger, nil
 }
 
-func (mc *moneyChangerRepository ) GetAll() ([]model.MoneyChanger, error) {
+func (mc *moneyChangerRepository) GetAll() ([]model.MoneyChanger, error) {
 	var moneyChanger []model.MoneyChanger
 	err := mc.db.Select(&moneyChanger, utils.SELECT_MONEY_CHANGER)
 	if err != nil {
@@ -44,9 +43,9 @@ func (mc *moneyChangerRepository ) GetAll() ([]model.MoneyChanger, error) {
 
 }
 
-func NewMoneyChanger(db * sqlx.DB) MoneyChangerRepository {
+func NewMoneyChanger(db *sqlx.DB) MoneyChangerRepository {
 	return &moneyChangerRepository{
 		db: db,
 	}
-	
+
 }

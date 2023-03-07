@@ -17,10 +17,10 @@ type UserUseCase interface {
 	GetUserByID(id string) (model.User, error)
 	GetAllUsers() ([]model.User, error)
 	UpdateUser(user model.User) error
-	DeleteUser(id string) error
+	// DeleteUser(id string) error
 	Login(input *dto.LoginRequestBody) (model.User, error)
 	ForgotPass(input *dto.ForgotPasswordRequestBody) error
-	GetUser_ListTrans(userWallet_id string) (model.UserTransaction, error)
+	GetUserWithTrans(userId string) (model.UserTransaction, error)
 }
 
 // User Use Case implementation
@@ -30,20 +30,20 @@ type userUseCase struct {
 }
 
 // GetUser_ListTrans implements UserUseCase
-func (ut *userUseCase) GetUser_ListTrans(userWallet_id string) (model.UserTransaction, error) {
+func (ut *userUseCase) GetUser_ListTrans(userWallet_id string) (*model.UserTransaction, error) {
 	var userTransactions model.UserTransaction
 	user, err := ut.userRepo.GetByID(userWallet_id)
 	if err != nil {
-		return userTransactions, err
+		return &userTransactions, err
 	}
 	listTrans, err := ut.transUC.TransactionByUserId(userWallet_id)
 	if err != nil {
-		return model.UserTransaction{}, err
+		return &model.UserTransaction{}, err
 	}
 	userTransactions.UserWallet_id = user.ID
 	userTransactions.UserName = user.Name
-	userTransactions.Transaction = listTrans
-	return userTransactions, nil
+	userTransactions.Transaction = (listTrans)
+	return &userTransactions, nil
 }
 
 type USConfig struct {
@@ -79,9 +79,9 @@ func (u *userUseCase) UpdateUser(user model.User) error {
 	return u.userRepo.UpdateById(user)
 }
 
-func (u *userUseCase) DeleteUser(id string) error {
-	return u.userRepo.Delete(id)
-}
+// func (u *userUseCase) DeleteUser(id string) error {
+// 	return u.userRepo.Delete(id)
+// }
 
 func (u *userUseCase) ForgotPass(input *dto.ForgotPasswordRequestBody) error {
 	fmt.Println(input)
@@ -112,6 +112,22 @@ func (s *userUseCase) Login(input *dto.LoginRequestBody) (model.User, error) {
 		return user, &utils.IncorrectCredentialsError{}
 	}
 	return user, nil
+}
+
+func(r *userUseCase) GetUserWithTrans(userId string) (model.UserTransaction, error){
+	var userTrans model.UserTransaction
+	user, err:= r.GetUserByID(userId)
+	if err!= nil{
+		return model.UserTransaction{}, err
+	}
+	trans, err:= r.transUC.TransactionByUserId(user.ID)
+	if err != nil{
+		return model.UserTransaction{}, err
+	}
+	userTrans.UserWallet_id = user.ID
+	userTrans.UserName = user.Name
+	userTrans.Transaction = trans
+	return userTrans, nil
 }
 
 func NewUserUseCase(userRepo repository.UserRepository, transUC TransactionUscase) UserUseCase {

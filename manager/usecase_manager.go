@@ -8,7 +8,6 @@ type UsecaseManager interface {
 	MoneyChangerUsecase() usecase.MoneyChangerUsecase
 	PaymentMethodUsecase() usecase.PaymentMethodUsecase
 	TransactionTypeUsecase() usecase.TransactionTypeUsecase
-
 	TransService() usecase.TransService
 }
 
@@ -22,6 +21,7 @@ func (u *useCaseManager) TransService() usecase.TransService {
 		u.repoManager.UserRepository(),
 		u.UserUseCase(),
 		u.repoManager.TransactionRepository(),
+		u.MoneyChangerUsecase(),
 	)
 }
 
